@@ -1,0 +1,9 @@
+{
+    "welcome_message": "Welcome to the File Manager!",
+    "login_success": "Login successful.",
+    "login_failed": "Invalid credentials. Please try again.",
+    "file_upload_success": "File uploaded successfully.",
+    "file_upload_failed": "Failed to upload file.",
+    "logout_message": "You have been logged out."
+  }
+  
