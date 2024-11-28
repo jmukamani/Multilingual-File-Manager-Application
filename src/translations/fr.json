@@ -1,0 +1,9 @@
+{
+    "welcome_message": "Bienvenue dans le gestionnaire de fichiers !",
+    "login_success": "Connexion réussie.",
+    "login_failed": "Identifiants invalides. Veuillez réessayer.",
+    "file_upload_success": "Fichier téléchargé avec succès.",
+    "file_upload_failed": "Échec du téléchargement du fichier.",
+    "logout_message": "Vous avez été déconnecté."
+  }
+  
