@@ -54,6 +54,7 @@ Ensure you have the following installed on your machine:
 ```bash
 git clone https://github.com/your-repo/file-manager.git
 cd file-manager
+```
 
 ### 3. Install Dependencies
 ```bash
