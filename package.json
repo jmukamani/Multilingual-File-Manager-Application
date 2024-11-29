@@ -1,7 +1,7 @@
 {
   "name": "multilingual-file-manager-application",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "directories": {
     "test": "tests"
   },
@@ -89,6 +89,7 @@
     "exit": "^0.1.2",
     "expect": "^29.7.0",
     "express": "^4.21.1",
+    "express-validator": "^7.2.0",
     "fast-json-stable-stringify": "^2.1.0",
     "fb-watchman": "^2.0.2",
     "filelist": "^1.0.4",
@@ -317,7 +318,9 @@
     "yocto-queue": "^0.1.0"
   },
   "scripts": {
+    "start": "node src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+    
   },
   "keywords": [],
   "author": "",

@@ -1,4 +1,3 @@
-// src/controllers/fileController.js
 const File = require('../models/file');
 const User = require('../models/User');
 const fs = require('fs').promises;
