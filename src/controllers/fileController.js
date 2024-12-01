@@ -3,6 +3,7 @@ const fileUploadQueue = require('../utils/queue');
 
 const createFileHandler = async (req, res) => {
   try {
+
     // Extract file data from request body
     const { name, path, size, directory } = req.body;
     
@@ -19,6 +20,7 @@ const createFileHandler = async (req, res) => {
     const newFile = await createFile(fileData);
     
     res.status(201).json(newFile);
+    
   } catch (error) {
     console.error('File creation error:', error);
     res.status(400).json({ 
