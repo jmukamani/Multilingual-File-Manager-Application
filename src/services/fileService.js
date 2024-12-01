@@ -1,9 +1,27 @@
 const File = require('../models/File');
 const Directory = require('../models/Directory');
 
-const createFile = async (fileData, userId) => {
-  const { name, path, size, directory } = fileData;
-  const file = new File({ name, path, size, user: userId, directory });
+const createFile = async (fileData) => {
+  const { name, path, size, directory, user } = fileData;
+  
+  // Validate that the directory belongs to the user
+  const directoryDoc = await Directory.findOne({ 
+    _id: directory, 
+    user: user 
+  });
+
+  if (!directoryDoc) {
+    throw new Error('Directory not found or does not belong to the user');
+  }
+
+  const file = new File({ 
+    name, 
+    path, 
+    size, 
+    user, 
+    directory 
+  });
+  
   await file.save();
   return file;
 };
