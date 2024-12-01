@@ -1,20 +1,43 @@
 const express = require('express');
-const connectDB = require('./config/mongodb');
-const { i18nextMiddleware } = require('./config/i18n');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const passport = require('passport');
+const session = require('express-session');
+const i18nMiddleware = require('./middlewares/i18nMiddleware');
 const authRoutes = require('./routes/authRoutes');
 const fileRoutes = require('./routes/fileRoutes');
-const dotenv = require('dotenv');
+const userRoutes = require('./routes/userRoutes');
+require('./config/passport'); // Passport configuration
 
 dotenv.config();
-connectDB();
 
 const app = express();
+
+// Middleware setup
 app.use(express.json());
-app.use(i18nextMiddleware.handle(i18n));
+app.use(express.urlencoded({ extended: true }));
+app.use(session({ secret: 'session_secret', resave: false, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(i18nMiddleware);
+
+// Routes
+app.get('/', (req, res) => {
+  res.send('Welcome to the File Manager API. Please use Postman or curl to access the API endpoints.');
+});
+
+app.get('*', (req, res) => {
+  res.status(404).send('Endpoint not found. Please check the API documentation.');
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/files', fileRoutes);
+app.use('/api/users', userRoutes);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// Error handler middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'An internal error occurred', error: err.message });
 });
+
+module.exports = app;
