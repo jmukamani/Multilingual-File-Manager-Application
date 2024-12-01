@@ -1,13 +1,20 @@
 const express = require('express');
-const { uploadFile, getUserFiles, deleteFile } = require('../controllers/fileController');
-const authMiddleware = require('../middleware/authMiddleware');
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // Set your upload directory
-
+const { 
+  createFileHandler, 
+  getFileHandler, 
+  updateFileHandler, 
+  deleteFileHandler, 
+  uploadFileHandler 
+} = require('../controllers/fileController');
+const { authenticate } = require('../middlewares/authMiddleware');
 const router = express.Router();
 
-router.post('/upload', authMiddleware, upload.single('file'), uploadFile);
-router.get('/files', authMiddleware, getUserFiles);
-router.delete('/files/:fileId', authMiddleware, deleteFile);
+// Define routes for file management
+router.post('/create', authenticate, createFileHandler); // File creation
+router.get('/:id', authenticate, getFileHandler); // Get file by ID
+router.put('/:id', authenticate, updateFileHandler); // Update file
+router.delete('/:id', authenticate, deleteFileHandler); // Delete file
+router.post('/upload', authenticate, uploadFileHandler); // Upload file (queued)
 
+// Export the router
 module.exports = router;

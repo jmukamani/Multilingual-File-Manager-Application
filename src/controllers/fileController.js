@@ -1,87 +1,54 @@
-const File = require('../models/file');
-const User = require('../models/User');
-const fs = require('fs').promises;
-const path = require('path');
+const { createFile, getFileById, updateFile, deleteFile } = require('../services/fileService');
+const fileUploadQueue = require('../utils/queue');
 
-exports.uploadFile = async (req, res) => {
-    try {
-        const { user } = req;
-        const file = req.file;
-        
-        // Create file record in database
-        const newFile = new File({
-            filename: file.filename,
-            originalName: file.originalname,
-            mimetype: file.mimetype,
-            size: file.size,
-            path: file.path,
-            user: user.id
-        });
-        
-        await newFile.save();
-        
-        // Update user's files
-        await User.findByIdAndUpdate(
-            user.id, 
-            { $push: { files: newFile._id } }
-        );
-        
-        res.status(201).json({
-            message: 'File uploaded successfully',
-            file: newFile
-        });
-    } catch (error) {
-        res.status(500).json({ 
-            message: 'File upload failed', 
-            error: error.message 
-        });
-    }
+const createFileHandler = async (req, res) => {
+  try {
+    const file = await createFile(req.body, req.user.id);
+    res.status(201).json({ file });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
-exports.getUserFiles = async (req, res) => {
-    try {
-        const files = await File.find({ user: req.user.id });
-        res.json(files);
-    } catch (error) {
-        res.status(500).json({ 
-            message: 'Could not retrieve files', 
-            error: error.message 
-        });
-    }
+const getFileHandler = async (req, res) => {
+  try {
+    const file = await getFileById(req.params.id, req.user.id);
+    res.status(200).json({ file });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+}
+
+const updateFileHandler = async (req, res) => {
+  try {
+    const file = await updateFile(req.params.id, req.user.id, req.body);
+    res.status(200).json({ file });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+}
+
+const deleteFileHandler = async (req, res) => {
+  try {
+    const file = await deleteFile(req.params.id, req.user.id);
+    res.status(200).json({ message: 'File deleted successfully', file });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+}
+
+const uploadFileHandler = async (req, res) => {
+  try {
+    // Add a job to the queue
+    const job = await fileUploadQueue.add({
+      fileName: req.body.name,
+      filePath: req.body.path,
+      fileSize: req.body.size,
+    });
+    res.status(201).json({ message: 'File upload initiated', jobId: job.id });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to enqueue file upload', error });
+  }
 };
 
-exports.deleteFile = async (req, res) => {
-    try {
-        const { fileId } = req.params;
-        
-        // Find and delete file
-        const file = await File.findOneAndDelete({ 
-            _id: fileId, 
-            user: req.user.id 
-        });
-        
-        if (!file) {
-            return res.status(404).json({ 
-                message: 'File not found' 
-            });
-        }
-        
-        // Remove file from filesystem
-        await fs.unlink(path.join(__dirname, '../../', file.path));
-        
-        // Remove file reference from user
-        await User.findByIdAndUpdate(
-            req.user.id, 
-            { $pull: { files: fileId } }
-        );
-        
-        res .status(200).json({ 
-            message: 'File deleted successfully' 
-        });
-    } catch (error) {
-        res.status(500).json({ 
-            message: 'File deletion failed', 
-            error: error.message 
-        });
-    }
-};
+module.exports = { createFileHandler, getFileHandler, updateFileHandler, deleteFileHandler, uploadFileHandler };
