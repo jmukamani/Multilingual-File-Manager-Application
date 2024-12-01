@@ -10,7 +10,7 @@ const userRoutes = require('./routes/userRoutes');
 const directoryRoutes = require('./routes/directoryRoutes');
 require('./config/passport'); // Passport configuration
 
-dotenv.config();
+require('dotenv').config([{ path: './env' }]); 
 
 const app = express();
 
