@@ -139,6 +139,7 @@ dist
 .svelte-kit
 
 .structure.txt
-
+.mongodb-org_6.0.6_amd64.deb
+.babelrc
 
 # End of https://www.toptal.com/developers/gitignore/api/node
