@@ -1,126 +1,192 @@
-# Multi-User File Manager Application
+### Multilingual File Manager Application Documentation
+## 1. Project Overview
+The Multilingual File Manager is a robust web application designed to provide secure, multi-user file management with internationalization support.
 
-## Description
+## 2. Technical Stack
+Backend: Node.js, Express.js
+Database: MongoDB
+Authentication: Passport.js, JWT
+Internationalization: i18next
+Additional Libraries:
+bcryptjs for password hashing
+mongoose for database ORM
+express-session for session management
 
-This project is a backend application for a **multi-user file manager** built with Node.js. It allows users to securely register, log in, and manage files within their designated directories. The application demonstrates core backend development skills, including authentication, file handling, database interaction, and unit testing.
+## 3. Project Structure
+file-manager/
+├── src/
+│   ├── config/
+│   │   ├── database.js
+│   │   ├── passport.js
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   ├── fileController.js
+│   │   └── userController.js
+│   ├── middleware/
+│   │   ├── authMiddleware.js
+│   │   └── i18nMiddleware.js
+│   ├── models/
+│   │   ├── User.js
+│   │   └── File.js
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   ├── fileRoutes.js
+│   │   └── userRoutes.js
+│   └── locales/
+│       ├── en.json
+│       └── es.json
+├── .env
+├── app.js
+└── server.js
+## 4. Key Features
+User Registration and Authentication
+Multilingual Support
+Secure File Management
+User Profile Management
+## 5. Environment Setup
+# Prerequisites
+Node.js (v14+ recommended)
+MongoDB
+Redis (optional)
+Installation Steps
+Clone the repository
+git clone https://github.com/jmukamani/multilingual-file-manager.git
 
----
+cd multilingual-file-manager
 
-## Features
+Install Dependencies
+npm install
+Create .env File
 
-### 1. User Management
-- Secure user registration and login.
-- Passwords hashed using **bcrypt**.
-- Authentication managed with **JWT**.
-
-### 2. File Management
-- Create, read, update, and delete files within user-specific directories.
-- Directories and files are managed securely using the **fs-extra** library.
-
-### 3. Multilingual Support (i18n)
-- [Optional] Allow users to select their preferred interface language.
-
-### 4. Queuing System
-- [Optional] Use **Redis** for asynchronous tasks such as file uploads or progress tracking.
-
-### 5. Unit Testing
-- Comprehensive tests for user authentication and file management functionality using **Jest**.
-
----
-
-## Technologies Used
-
-- **Node.js**: Backend framework.
-- **Express.js**: Server and API framework.
-- **MongoDB**: Database for storing user and file metadata.
-- **Mongoose**: ODM for database management.
-- **Redis**: Queuing system for asynchronous tasks.
-- **bcrypt**: Password hashing for secure user authentication.
-- **JWT**: Token-based authentication.
-- **fs-extra**: Simplifies file system operations.
-- **Jest**: Testing framework for unit and integration tests.
-
----
-
-## Installation and Setup
-
-### 1. Prerequisites
-Ensure you have the following installed on your machine:
-- **Node.js** (v14+)
-- **MongoDB** (local or cloud-based, e.g., MongoDB Atlas)
-- **Redis** (optional for queuing system)
-
-### 2. Clone the Repository
-```bash
-git clone https://github.com/your-repo/file-manager.git
-cd file-manager
-```
-
-### 3. Install Dependencies
-```bash
-npm intall
-```
-
-### 4. Set Up Environment Variables
-Create a ```.env``` file in the root of the project and add the following:
-```
+MONGODB_URI=mongodb://localhost:27017/filemanager
 PORT=3000
-MONGO_URI=mongodb://localhost:27017/file_manager
-JWT_SECRET=your_secret
-```
-**Note: Replace ```mongodb://localhost:27017/file_manager``` with your MongoDB connection string if you're using MongoDB Atlas or another host.** 
+SESSION_SECRET=your_session_secret
+JWT_SECRET=your_jwt_secret
 
-### 5. Start the MongoDB Server
-If using a local MongoDB instance, ensure it's running:
-```
-mongob
-```
-
----
-
-## Usage
-
-### Start the Server
-Run the server locally:
-```
+Start the Server
 npm start
-```
-The application will be available at ```http://localhost:3000```.
 
-## API Endpoints
+## 6. API Endpoints
+Authentication Endpoints
+POST /api/auth/register
+Register a new user
+Body: { username, email, password, language }
 
-### User Management
-- **POST /api/users/register:** Register a new user.
-    - Body: ```{ "email": "example@example.com", "password": "password123" }```
-- **POST /api/users/login:** Log in an existing user.
-    - Body: ```{ "email": "example@example.com", "password": "password123" }```
-### File Management
-- **POST /api/files:** Create a new file.
-    - Body: ```{ "fileName": "example.txt", "content": "Hello World" }```
-- **GET /api/files/:fileName:** Read a file.
-- **PUT /api/files:** Update an existing file.
-    - Body: ```{ "fileName": "example.txt", "content": "Updated Content" }```
-- **DELETE /api/files/:fileName:** Delete a file.
+POST /api/auth/login
+User login
+Body: { email, password }
 
----
+User Endpoints
+GET /api/users/profile
+Retrieve user profile (authenticated)
 
-## Testing
+PUT /api/users/profile
+Update user profile (authenticated)
+Body: { username, language }
 
-### Run Tests
-Use the following command to run unit tests:
-```
-npm test
-```
+File Endpoints
+POST /api/files/upload
+Upload a file (authenticated)
+Supports file upload with directory 
 
----
+GET /api/files
+List files (authenticated)
+Optional query parameters for directory filtering
+
+DELETE /api/files/:fileId
+Delete a specific file (authenticated)
+
+## 7. Internationalization
+The application supports multiple languages through i18next:
+Default Language: English
+Supported Languages: English, Spanish
+Language can be changed via user profile or detected automatically
+
+## 8. Security Features
+Password Hashing with bcrypt
+JWT-based Authentication
+Passport.js Local Strategy
+Protected Routes
+Input Validation
+
+## 9. Error Handling
+Centralized error middleware
+Detailed error responses
+Logging of server-side errors
+
+## 10. Performance Considerations
+Efficient database queries
+Minimal middleware stack
+Stateless authentication with JWT
+
+## 11. Troubleshooting
+Ensure MongoDB is running
+Check .env configuration
+Verify network permissions
+Review server logs for detailed errors
+
+### Demo Scenario: File Management Workflow
+# Scenario: Sarah's Project Collaboration
+User Registration
+POST /api/auth/register
+{
+  "username": "sarah_dev",
+  "email": "sarah@project.com",
+  "password": "SecurePass123!",
+  "language": "en"
+}
+
+# User Login
+POST /api/auth/login
+{
+  "email": "sarah@project.com",
+  "password": "SecurePass123!"
+}
+
+# Create Project Directory
+POST /api/files/directory
+{
+  "directoryName": "ProjectX",
+  "parentDirectoryId": null
+}
+
+# Upload Project Documents
+POST /api/files/upload
+{
+  "file": "requirements.pdf",
+  "parentDirectoryId": "projectx_directory_id"
+}
+
+# List Project Files
+
+GET /api/files?parentDirectoryId=projectx_directory_id
+Update User Language Preference
+
+PUT /api/users/profile
+{
+  "language": "es"
+}
+## Workflow Highlights
+Secure authentication
+Multilingual interface
+Hierarchical file management
+User-specific file access
+Postman/cURL Testing
+Included Postman collection and cURL commands in the documentation for easy API testing.
+
+## Recommended Improvements
+Implement file sharing
+Add real-time collaboration features
+Enhance error handling
+Implement more granular permissions
+
+### Contribution Guidelines
+Fork the repository
+Create feature branches
+Write comprehensive tests
+Follow coding standards
+Submit pull requests
 
 ## Contributors
-
-- **Juliet Mukamani:**
-- **Bryan Aurel Bakongo Bwemou**
-
----
-
-## License
-
-This project is licensed under the MIT License.
+Bryan Aurel
+Juliet Mukamani
