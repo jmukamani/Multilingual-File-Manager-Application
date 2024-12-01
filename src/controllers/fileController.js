@@ -3,6 +3,12 @@ const fileUploadQueue = require('../utils/queue');
 
 const createFileHandler = async (req, res) => {
   try {
+    const { name, path, size, directory } = req.body;
+    //validate input
+    if (!name || !path || !size || !directory) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+    
     const file = await createFile(req.body, req.user.id);
     res.status(201).json({ file });
   } catch (error) {

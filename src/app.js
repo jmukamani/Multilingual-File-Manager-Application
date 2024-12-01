@@ -7,6 +7,7 @@ const i18nMiddleware = require('./middlewares/i18nMiddleware');
 const authRoutes = require('./routes/authRoutes');
 const fileRoutes = require('./routes/fileRoutes');
 const userRoutes = require('./routes/userRoutes');
+const directoryRoutes = require('./routes/directoryRoutes');
 require('./config/passport'); // Passport configuration
 
 dotenv.config();
@@ -26,13 +27,15 @@ app.get('/', (req, res) => {
   res.send('Welcome to the File Manager API. Please use Postman or curl to access the API endpoints.');
 });
 
+app.use('/api/auth', authRoutes);
+app.use('/api/directories', directoryRoutes);
+app.use('/api/files', fileRoutes);
+app.use('/api/users', userRoutes);
+
+// Move the catch-all route to the END
 app.get('*', (req, res) => {
   res.status(404).send('Endpoint not found. Please check the API documentation.');
 });
-
-app.use('/api/auth', authRoutes);
-app.use('/api/files', fileRoutes);
-app.use('/api/users', userRoutes);
 
 // Error handler middleware
 app.use((err, req, res, next) => {
